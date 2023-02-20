@@ -14,6 +14,7 @@ Année: LU3IN026 - semestre 2 - 2022-2023, Sorbonne Université
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import random
 
 # ------------------------ 
 
