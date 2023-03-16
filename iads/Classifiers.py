@@ -35,7 +35,6 @@ class Classifier:
                 "La dimension de la description des exemples doit etre strictement positive")
         else:
             self.dimension = input_dimension
-        # raise NotImplementedError("Please Implement this method")
 
     def train(self, desc_set, label_set):
         """ Permet d'entrainer le modele sur l'ensemble donné
@@ -63,8 +62,6 @@ class Classifier:
             label_set: ndarray avec les labels correspondants
             Hypothèse: desc_set et label_set ont le même nombre de lignes
         """
-        # ------------------------------
-        # COMPLETER CETTE FONCTION ICI :
         resultat = [self.predict(desc_set[i])
                     for i in range(0, len(label_set))]
         equal_count = sum([1 for i in range(0, len(label_set))
@@ -75,7 +72,7 @@ class Classifier:
         # ------------------------------
 
 
-# ------------------------ A COMPLETER :
+# ------------------------ ClassifierKNN :
 
 class ClassifierKNN(Classifier):
     """ Classe pour représenter un classifieur par K plus proches voisins.
@@ -91,25 +88,23 @@ class ClassifierKNN(Classifier):
                 - k (int) : nombre de voisins à considérer
             Hypothèse : input_dimension > 0
         """
+        self.input_dimension = input_dimension
         self.k = k
-        # raise NotImplementedError("Please Implement this method")
 
     def score(self, x):
         """ rend la proportion de +1 parmi les k ppv de x (valeur réelle)
             x: une description : un ndarray
         """
-        distance = np.argsort([np.linalg.norm(x - y) for y in self.desc])
-        p = sum([1 for a in range(self.k) if self.label[distance[a]] == +1])/self.k
-        return 2*(p - 0.5)
-
-        # raise NotImplementedError("Please Implement this method")
+        dist= np.linalg.norm(self.desc-x, axis=1)
+        argsort= np.argsort(dist)
+        score= np.sum(self.label[argsort[:self.k]] == 1)
+        return 2 * (score/self.k - 0.5)
 
     def predict(self, x):
         """ rend la prediction sur x (-1 ou +1)
             x: une description : un ndarray
         """
         return (+1 if self.score(x) >= 0 else -1)
-        raise NotImplementedError("Please Implement this method")
 
     def train(self, desc_set, label_set):
         """ Permet d'entrainer le modele sur l'ensemble donné
@@ -120,10 +115,9 @@ class ClassifierKNN(Classifier):
         self.desc = desc_set
         self.label = label_set
 
-        # raise NotImplementedError("Please Implement this method")
 
 
-# ------------------------ A COMPLETER :
+# ------------------------ ClassifierLineaireRandom :
 class ClassifierLineaireRandom(Classifier):
     """ Classe pour représenter un classifieur linéaire aléatoire
         Cette classe hérite de la classe Classifier
@@ -137,7 +131,6 @@ class ClassifierLineaireRandom(Classifier):
         """        
         self.v = np.random.uniform(-1,1,(1, input_dimension))
         self.w = self.v/np.linalg.norm(self.v)
-        # raise NotImplementedError("Please Implement this method")
         
     def train(self, desc_set, label_set):
         """ Permet d'entrainer le modele sur l'ensemble donné
@@ -146,49 +139,42 @@ class ClassifierLineaireRandom(Classifier):
             Hypothèse: desc_set et label_set ont le même nombre de lignes
         """        
         print("Pas d'apprentissage pour ce classifieur !")
-        # raise NotImplementedError("Please Implement this method")
     
     def score(self,x):
         """ rend le score de prédiction sur x (valeur réelle)
             x: une description
         """
         return np.dot(self.w, x)
-        raise NotImplementedError("Please Implement this method")
     
     def predict(self, x):
         """ rend la prediction sur x (soit -1 ou soit +1)
             x: une description
         """
         return (+1 if self.score(x) >= 0 else -1)
-        raise NotImplementedError("Please Implement this method")
     
 
 class ClassifierKNN_MC(Classifier):
 
     def __init__(self, input_dimension, k, c):
+        self.input_dimension = input_dimension
         self.k = k
         self.c = c
-        # raise NotImplementedError("Please Implement this method")
 
     def score(self, x):
-        distance = np.argsort([np.linalg.norm(x - y) for y in self.desc])
-        knn = [self.label[a] for a in distance[:self.k]]
+        distance = np.argsort(np.linalg.norm(self.desc - x, axis=1))
+        self.label[distance[:self.k]]
         return collections.Counter(knn).most_common(1)[0][0]
-        raise NotImplementedError("Please Implement this method")
 
     def predict(self, x):
         return self.score(x)
-        raise NotImplementedError("Please Implement this method")
 
     def train(self, desc_set, label_set):
         self.desc = desc_set
         self.label = label_set
         self.labels_unique = list(set(label_set))
-        # raise NotImplementedError("Please Implement this method")
-
-# ------------------------ A COMPLETER : DEFINITION DU CLASSIFIEUR PERCEPTRON
 
 
+# ------------------------ ClassifierPerceptron
 class ClassifierPerceptron(Classifier):
     """ Perceptron de Rosenblatt
     """
@@ -267,6 +253,7 @@ class ClassifierPerceptron(Classifier):
         return self.allw
 
 
+# ------------------------ ClassifierPerceptronBiais
 class ClassifierPerceptronBiais(ClassifierPerceptron):
     """ Perceptron de Rosenblatt avec biais
         Variante du perceptron de base
@@ -298,6 +285,5 @@ class ClassifierPerceptronBiais(ClassifierPerceptron):
         for i in indexes:
             f_xi = super().score(desc_set[i])
             if f_xi * label_set[i] < 1:
-                self.w = self.w + self.learning_rate * \
-                    (label_set[i] - f_xi)*desc_set[i]
+                self.w = self.w + self.learning_rate * (label_set[i]- f_xi)*desc_set[i]
                 self.allw.append(self.w.copy())
