@@ -165,7 +165,7 @@ class ClassifierKNN_MC(Classifier):
 
     def score(self, x):
         distance = np.argsort(np.linalg.norm(self.desc - x, axis=1))
-        knn = self.label[distance[:self.k]]
+        self.label[distance[:self.k]]
         return collections.Counter(knn).most_common(1)[0][0]
 
     def predict(self, x):

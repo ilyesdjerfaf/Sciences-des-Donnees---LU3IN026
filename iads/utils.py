@@ -156,20 +156,23 @@ def crossval(X, Y, n_iterations, iteration):
     Yapp = np.concatenate( (Y[:iteration*n],Y[(iteration+1)*n:]))
     return Xapp, Yapp, Xtest, Ytest
 
-def crossval_strat(X, Y, n_iterations, iteration):  
-    index_pos = [ i for i in range(len(Y)) if Y[i]==1]
-    index_neg = [ i for i in range(len(Y)) if Y[i]== -1]
+def crossval_strat(X, Y, n_iterations, iteration):
+    labels = np.unique(Y)
+    index_pos = np.where(Y == labels[1])[0]
+    index_neg = np.where(Y == labels[0])[0]
 
-    index_pos_test = index_pos[iteration*(len(index_pos) // n_iterations ): (iteration+1)*(len(index_pos) // n_iterations) ]
-    index_neg_test = index_neg[iteration*(len(index_neg) // n_iterations ): (iteration+1)*(len(index_neg) // n_iterations) ]
-    
-    Xtest = np.concatenate(( X[index_neg_test] , X[index_pos_test]  ))
-    Ytest =  np.concatenate((  Y[index_neg_test] , Y[index_pos_test] ))
+    index_pos_test = index_pos[iteration*(len(index_pos) // n_iterations): (
+        iteration+1)*(len(index_pos) // n_iterations)]
+    index_neg_test = index_neg[iteration*(len(index_neg) // n_iterations): (
+        iteration+1)*(len(index_neg) // n_iterations)]
 
-    index_app = [i for i in range(len(Y)) if ((i not in index_pos_test) and (i not in index_neg_test) )]
+    Xtest = np.concatenate((X[index_neg_test], X[index_pos_test]))
+    Ytest = np.concatenate((Y[index_neg_test], Y[index_pos_test]))
 
-    Xapp =  X[index_app]
-    Yapp =  Y[index_app]
+    index_app = np.setdiff1d(np.arange(len(Y)), np.concatenate([index_pos_test, index_neg_test]))   
+
+    Xapp = X[index_app]
+    Yapp = Y[index_app]
     return Xapp, Yapp, Xtest, Ytest
 
 
