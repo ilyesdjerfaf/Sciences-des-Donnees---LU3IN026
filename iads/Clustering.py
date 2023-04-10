@@ -22,8 +22,9 @@ from scipy.spatial.distance import cdist
 def normalisation(dataframe):
     return (dataframe - dataframe.min()) / (dataframe.max() - dataframe.min())
 
-def dist_euclidienne(v1, v2):
-        return np.linalg.norm(v1 - v2)
+def dist_euclidienne(X , Y):
+    return np.linalg.norm(X - Y )
+    
 
 def centroide(dataframe):
     return np.mean(dataframe,axis=0)
