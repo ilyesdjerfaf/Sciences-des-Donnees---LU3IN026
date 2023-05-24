@@ -41,8 +41,3 @@ Ce dépôt GitHub contient les travaux pratiques réalisés dans le cadre du cou
 
 ### TME 9 Plus : Plus de données pour du clustering
 - Utiliser des jeux de données en 2D différents afin d'expérimenter les algorithmes de clustering hiérarchique et des k-moyennes.
-
-## Structure du répertoire
-
-L'arborescence du répertoire doit ressembler à ceci :
-
